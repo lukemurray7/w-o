@@ -1,0 +1,151 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workout Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .workout-week {
+            display: none;
+        }
+        .active {
+            display: block;
+        }
+        .exercise-list {
+            list-style-type: none;
+        }
+        .exercise-list li {
+            margin: 5px 0;
+        }
+        #week-nav {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .nav-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Workout Tracker</h1>
+
+    <!-- Week Navigation -->
+    <div id="week-nav">
+        <button class="nav-button" id="prev-week">Previous Week</button>
+        <h2 id="current-week">Week 1</h2>
+        <button class="nav-button" id="next-week">Next Week</button>
+    </div>
+
+    <!-- Week 1 -->
+    <div class="workout-week active" id="week1">
+        <h2>Week 1: Full Body Strength & Compound Lifts</h2>
+        <ul class="exercise-list">
+            <li><input type="checkbox" class="exercise-checkbox" id="week1-squats"> Squats (4 sets x 8-10 reps)</li>
+            <li><input type="checkbox" class="exercise-checkbox" id="week1-deadlifts"> Deadlifts (3 sets x 5-8 reps)</li>
+            <li><input type="checkbox" class="exercise-checkbox" id="week1-bench-press"> Bench Press (4 sets x 8-10 reps)</li>
+            <li><input type="checkbox" class="exercise-checkbox" id="week1-bicep-curls"> Bicep Curls (3 sets x 10-12 reps)</li>
+            <li><input type="checkbox" class="exercise-checkbox" id="week1-planks"> Planks (3 sets x 30-60 sec)</li>
+        </ul>
+    </div>
+
+    <!-- Week 2 -->
+    <div class="workout-week" id="week2">
+        <h2>Week 2: Pulling Movements + Core</h2>
+        <ul class="exercise-list">
+            <li><input type="checkbox" class="exercise-checkbox" id="week2-pull-ups"> Pull-ups (4 sets x 6-8 reps)</li>
+            <li><input type="checkbox" class="exercise-checkbox" id="week2-dl-variation"> Deadlift Variation (3 sets x 6-8 reps)</li>
+            <li><input type="checkbox" class="exercise-checkbox" id="week2-bicep-curls"> Bicep Curls (3 sets x 10-12 reps)</li>
+            <li><input type="checkbox" class="exercise-checkbox" id="week2-triceps-pushdowns"> Triceps Pushdowns (3 sets x 10-12 reps)</li>
+            <li><input type="checkbox" class="exercise-checkbox" id="week2-leg-raises"> Leg Raises (3 sets x 12-15 reps)</li>
+        </ul>
+    </div>
+
+    <!-- Week 3 -->
+    <div class="workout-week" id="week3">
+        <h2>Week 3: Pushing Movements + Arms</h2>
+        <ul class="exercise-list">
+            <li><input type="checkbox" class="exercise-checkbox" id="week3-shoulder-press"> Shoulder Press (4 sets x 8-10 reps)</li>
+            <li><input type="checkbox" class="exercise-checkbox" id="week3-squats"> Squats (3 sets x 8-10 reps)</li>
+            <li><input type="checkbox" class="exercise-checkbox" id="week3-bench-press"> Bench Press (3 sets x 8-10 reps)</li>
+            <li><input type="checkbox" class="exercise-checkbox" id="week3-tricep-dips"> Tricep Dips (3 sets x 8-10 reps)</li>
+            <li><input type="checkbox" class="exercise-checkbox" id="week3-russian-twists"> Russian Twists (3 sets x 15-20 reps)</li>
+        </ul>
+    </div>
+
+    <!-- JavaScript for Navigation and LocalStorage -->
+    <script>
+        const weeks = document.querySelectorAll('.workout-week');
+        const weekNav = document.getElementById('current-week');
+        let currentWeek = 0;
+
+        // Load saved state from localStorage
+        function loadState() {
+            weeks.forEach((week, index) => {
+                const checkboxes = week.querySelectorAll('.exercise-checkbox');
+                checkboxes.forEach(checkbox => {
+                    const savedState = localStorage.getItem(checkbox.id);
+                    if (savedState === 'checked') {
+                        checkbox.checked = true;
+                    }
+                });
+            });
+        }
+
+        // Save state to localStorage
+        function saveState() {
+            weeks.forEach((week, index) => {
+                const checkboxes = week.querySelectorAll('.exercise-checkbox');
+                checkboxes.forEach(checkbox => {
+                    localStorage.setItem(checkbox.id, checkbox.checked ? 'checked' : 'unchecked');
+                });
+            });
+        }
+
+        // Update the displayed week
+        function updateWeek() {
+            weeks.forEach((week, index) => {
+                week.classList.remove('active');
+            });
+            weeks[currentWeek].classList.add('active');
+            weekNav.textContent = `Week ${currentWeek + 1}`;
+        }
+
+        // Navigate to the previous week
+        document.getElementById('prev-week').addEventListener('click', () => {
+            if (currentWeek > 0) {
+                currentWeek--;
+                updateWeek();
+            }
+        });
+
+        // Navigate to the next week
+        document.getElementById('next-week').addEventListener('click', () => {
+            if (currentWeek < weeks.length - 1) {
+                currentWeek++;
+                updateWeek();
+            }
+        });
+
+        // Event listener to save the state when a checkbox is clicked
+        document.querySelectorAll('.exercise-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', saveState);
+        });
+
+        // Initial load of state and week
+        loadState();
+        updateWeek();
+    </script>
+</body>
+</html>
