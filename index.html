@@ -1,151 +1,454 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Workout Tracker</title>
+    <title>Workout Tracker - Week 1</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f4f8;
+            color: #2d3748;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            color: #4a5568;
+            font-weight: 700;
         }
         h1 {
             text-align: center;
-        }
-        .workout-week {
-            display: none;
-        }
-        .active {
-            display: block;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            color: #5a67d8;
         }
         .exercise-list {
             list-style-type: none;
+            padding: 0;
         }
         .exercise-list li {
-            margin: 5px 0;
+            margin: 10px 0;
+            padding: 15px;
+            background-color: #edf2f7;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .exercise-list li:hover {
+            transform: translateX(5px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         #week-nav {
-            text-align: center;
-            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
         }
         .nav-button {
-            background-color: #4CAF50;
-            color: white;
+            background-color: #5a67d8;
+            color: #ffffff;
             border: none;
-            padding: 10px;
+            padding: 10px 20px;
             cursor: pointer;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+        .nav-button:hover {
+            background-color: #4c51bf;
+            transform: scale(1.05);
+        }
+        .exercise-checkbox {
+            margin-right: 15px;
+            pointer-events: none;
+            appearance: none;
+            width: 22px;
+            height: 22px;
+            border: 2px solid #5a67d8;
+            border-radius: 50%;
+            outline: none;
+            transition: all 0.3s ease;
+            position: relative;
+            flex-shrink: 0;
+        }
+        .exercise-checkbox:checked {
+            background-color: #5a67d8;
+            box-shadow: 0 0 5px rgba(90, 103, 216, 0.5);
+        }
+        .exercise-checkbox:checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        #streak-display {
+            background-color: #5a67d8;
+            color: #ffffff;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-size: 18px;
+            margin-bottom: 20px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .check-all-button {
+            background-color: #48bb78;
+            color: #ffffff;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            margin-left: 10px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+        .check-all-button:hover {
+            background-color: #38a169;
+            transform: scale(1.05);
+        }
+        .check-all-button.uncheck {
+            background-color: #e53e3e;
+        }
+        .check-all-button.uncheck:hover {
+            background-color: #c53030;
+        }
+        .workout-section {
+            margin-bottom: 30px;
+        }
+        .workout-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .exercise-list li.clicked {
+            animation: pulse 0.3s ease-in-out;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 15px;
+            }
+            h1 {
+                font-size: 2em;
+            }
+            h2 {
+                font-size: 1.5em;
+            }
+            .nav-button {
+                padding: 8px 15px;
+                font-size: 12px;
+            }
+            .exercise-list li {
+                padding: 10px;
+            }
+            .workout-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .check-all-button {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            h2 {
+                font-size: 1.3em;
+            }
+            #week-nav {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .nav-button {
+                margin-bottom: 10px;
+            }
+            #current-week {
+                text-align: center;
+                margin-bottom: 10px;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>Workout Tracker</h1>
+    <div class="container">
+        <h1 id="week-title"></h1>
 
-    <!-- Week Navigation -->
-    <div id="week-nav">
-        <button class="nav-button" id="prev-week">Previous Week</button>
-        <h2 id="current-week">Week 1</h2>
-        <button class="nav-button" id="next-week">Next Week</button>
-    </div>
+        <!-- Change streak button to a display -->
+        <div id="streak-display">🔥 Streak: 0 weeks</div>
 
-    <!-- Week 1 -->
-    <div class="workout-week active" id="week1">
-        <h2>Week 1: Full Body Strength & Compound Lifts</h2>
-        <ul class="exercise-list">
-            <li><input type="checkbox" class="exercise-checkbox" id="week1-squats"> Squats (4 sets x 8-10 reps)</li>
-            <li><input type="checkbox" class="exercise-checkbox" id="week1-deadlifts"> Deadlifts (3 sets x 5-8 reps)</li>
-            <li><input type="checkbox" class="exercise-checkbox" id="week1-bench-press"> Bench Press (4 sets x 8-10 reps)</li>
-            <li><input type="checkbox" class="exercise-checkbox" id="week1-bicep-curls"> Bicep Curls (3 sets x 10-12 reps)</li>
-            <li><input type="checkbox" class="exercise-checkbox" id="week1-planks"> Planks (3 sets x 30-60 sec)</li>
-        </ul>
-    </div>
+        <!-- Week Navigation -->
+        <div id="week-nav">
+            <button class="nav-button" id="prev-week">Previous Week</button>
+            <h2 id="current-week"></h2>
+            <button class="nav-button" id="next-week">Next Week</button>
+        </div>
 
-    <!-- Week 2 -->
-    <div class="workout-week" id="week2">
-        <h2>Week 2: Pulling Movements + Core</h2>
-        <ul class="exercise-list">
-            <li><input type="checkbox" class="exercise-checkbox" id="week2-pull-ups"> Pull-ups (4 sets x 6-8 reps)</li>
-            <li><input type="checkbox" class="exercise-checkbox" id="week2-dl-variation"> Deadlift Variation (3 sets x 6-8 reps)</li>
-            <li><input type="checkbox" class="exercise-checkbox" id="week2-bicep-curls"> Bicep Curls (3 sets x 10-12 reps)</li>
-            <li><input type="checkbox" class="exercise-checkbox" id="week2-triceps-pushdowns"> Triceps Pushdowns (3 sets x 10-12 reps)</li>
-            <li><input type="checkbox" class="exercise-checkbox" id="week2-leg-raises"> Leg Raises (3 sets x 12-15 reps)</li>
-        </ul>
-    </div>
+        <!-- Week Workouts (now with Check All buttons) -->
+        <div class="workout-section">
+            <div class="workout-header">
+                <h2>Full Body Strength & Compound Lifts (Day 1)</h2>
+                <button class="check-all-button" data-day="day1">Check All</button>
+            </div>
+            <ul class="exercise-list" id="day1-exercises">
+                <li><input type="checkbox" class="exercise-checkbox" id="squats"><label for="squats">Squats (4 sets x 8-10 reps)</label></li>
+                <li><input type="checkbox" class="exercise-checkbox" id="deadlifts"><label for="deadlifts">Deadlifts (3 sets x 5-8 reps)</label></li>
+                <li><input type="checkbox" class="exercise-checkbox" id="bench-press"><label for="bench-press">Bench Press (4 sets x 8-10 reps)</label></li>
+                <li><input type="checkbox" class="exercise-checkbox" id="bicep-curls"><label for="bicep-curls">Bicep Curls (3 sets x 10-12 reps)</label></li>
+                <li><input type="checkbox" class="exercise-checkbox" id="planks"><label for="planks">Planks (3 sets x 30-60 sec)</label></li>
+            </ul>
+        </div>
 
-    <!-- Week 3 -->
-    <div class="workout-week" id="week3">
-        <h2>Week 3: Pushing Movements + Arms</h2>
-        <ul class="exercise-list">
-            <li><input type="checkbox" class="exercise-checkbox" id="week3-shoulder-press"> Shoulder Press (4 sets x 8-10 reps)</li>
-            <li><input type="checkbox" class="exercise-checkbox" id="week3-squats"> Squats (3 sets x 8-10 reps)</li>
-            <li><input type="checkbox" class="exercise-checkbox" id="week3-bench-press"> Bench Press (3 sets x 8-10 reps)</li>
-            <li><input type="checkbox" class="exercise-checkbox" id="week3-tricep-dips"> Tricep Dips (3 sets x 8-10 reps)</li>
-            <li><input type="checkbox" class="exercise-checkbox" id="week3-russian-twists"> Russian Twists (3 sets x 15-20 reps)</li>
-        </ul>
-    </div>
+        <div class="workout-section">
+            <div class="workout-header">
+                <h2>Pulling Movements + Core (Day 2)</h2>
+                <button class="check-all-button" data-day="day2">Check All</button>
+            </div>
+            <ul class="exercise-list" id="day2-exercises">
+                <li><input type="checkbox" class="exercise-checkbox" id="pull-ups"><label for="pull-ups">Pull-ups (4 sets x 6-8 reps)</label></li>
+                <li><input type="checkbox" class="exercise-checkbox" id="dl-variation"><label for="dl-variation">Deadlift Variation (3 sets x 6-8 reps)</label></li>
+                <li><input type="checkbox" class="exercise-checkbox" id="bicep-curls-day2"><label for="bicep-curls-day2">Bicep Curls (3 sets x 10-12 reps)</label></li>
+                <li><input type="checkbox" class="exercise-checkbox" id="triceps-pushdowns"><label for="triceps-pushdowns">Triceps Pushdowns (3 sets x 10-12 reps)</label></li>
+                <li><input type="checkbox" class="exercise-checkbox" id="leg-raises"><label for="leg-raises">Leg Raises (3 sets x 12-15 reps)</label></li>
+            </ul>
+        </div>
 
-    <!-- JavaScript for Navigation and LocalStorage -->
-    <script>
-        const weeks = document.querySelectorAll('.workout-week');
-        const weekNav = document.getElementById('current-week');
-        let currentWeek = 0;
+        <div class="workout-section">
+            <div class="workout-header">
+                <h2>Pushing Movements + Arms (Day 3)</h2>
+                <button class="check-all-button" data-day="day3">Check All</button>
+            </div>
+            <ul class="exercise-list" id="day3-exercises">
+                <li><input type="checkbox" class="exercise-checkbox" id="shoulder-press"><label for="shoulder-press">Shoulder Press (4 sets x 8-10 reps)</label></li>
+                <li><input type="checkbox" class="exercise-checkbox" id="squats-day3"><label for="squats-day3">Squats (3 sets x 8-10 reps)</label></li>
+                <li><input type="checkbox" class="exercise-checkbox" id="bench-press-day3"><label for="bench-press-day3">Bench Press (3 sets x 8-10 reps)</label></li>
+                <li><input type="checkbox" class="exercise-checkbox" id="tricep-dips"><label for="tricep-dips">Tricep Dips (3 sets x 8-10 reps)</label></li>
+                <li><input type="checkbox" class="exercise-checkbox" id="russian-twists"><label for="russian-twists">Russian Twists (3 sets x 15-20 reps)</label></li>
+            </ul>
+        </div>
 
-        // Load saved state from localStorage
-        function loadState() {
-            weeks.forEach((week, index) => {
-                const checkboxes = week.querySelectorAll('.exercise-checkbox');
-                checkboxes.forEach(checkbox => {
-                    const savedState = localStorage.getItem(checkbox.id);
-                    if (savedState === 'checked') {
-                        checkbox.checked = true;
+        <!-- JavaScript for Week Navigation and LocalStorage -->
+        <script>
+            // Helper function to get the current week of the year
+            Date.prototype.getWeek = function() {
+                const firstDayOfYear = new Date(this.getFullYear(), 0, 1);
+                const pastDaysOfYear = (this - firstDayOfYear) / 86400000;
+                return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
+            };
+
+            let currentWeek = new Date().getWeek();  // Start with the current week
+            const weekNav = document.getElementById('current-week');
+            const weekTitle = document.getElementById('week-title');
+            let streak = 0;
+
+            // Function to update streak
+            function updateStreak() {
+                const streakDisplay = document.getElementById('streak-display');
+                streakDisplay.textContent = `🔥 Streak: ${streak} week${streak !== 1 ? 's' : ''}`;
+            }
+
+            // Function to calculate streak
+            function calculateStreak() {
+                let streakCount = 0;
+                let week = currentWeek - 1; // Start from the previous week
+
+                while (week > 0) {
+                    let allChecked = true;
+                    document.querySelectorAll('.exercise-checkbox').forEach(checkbox => {
+                        const savedState = localStorage.getItem(`${checkbox.id}-week${week}`);
+                        if (savedState !== 'true') {
+                            allChecked = false;
+                        }
+                    });
+
+                    if (allChecked) {
+                        streakCount++;
+                        week--;
+                    } else {
+                        break;
                     }
+                }
+
+                return streakCount;
+            }
+
+            // Modified function to load state from localStorage
+            function loadState() {
+                document.querySelectorAll('.exercise-checkbox').forEach(checkbox => {
+                    const savedState = localStorage.getItem(`${checkbox.id}-week${currentWeek}`);
+                    checkbox.checked = savedState === 'true';
                 });
-            });
-        }
+                streak = calculateStreak();
+                updateStreak();
+                updateAllCheckAllButtons();
+            }
 
-        // Save state to localStorage
-        function saveState() {
-            weeks.forEach((week, index) => {
-                const checkboxes = week.querySelectorAll('.exercise-checkbox');
-                checkboxes.forEach(checkbox => {
-                    localStorage.setItem(checkbox.id, checkbox.checked ? 'checked' : 'unchecked');
+            // Modified function to save state to localStorage
+            function saveState() {
+                document.querySelectorAll('.exercise-checkbox').forEach(checkbox => {
+                    localStorage.setItem(`${checkbox.id}-week${currentWeek}`, checkbox.checked);
                 });
-            });
-        }
+                streak = calculateStreak();
+                updateStreak();
+                updateAllCheckAllButtons();
+            }
 
-        // Update the displayed week
-        function updateWeek() {
-            weeks.forEach((week, index) => {
-                week.classList.remove('active');
-            });
-            weeks[currentWeek].classList.add('active');
-            weekNav.textContent = `Week ${currentWeek + 1}`;
-        }
+            // Function to get the date of the Monday of a given week
+            function getDateOfWeek(week, year) {
+                const simple = new Date(year, 0, 1 + (week - 1) * 7);
+                const dow = simple.getDay();
+                const ISOweekStart = simple;
+                if (dow <= 4)
+                    ISOweekStart.setDate(simple.getDate() - simple.getDay() + 1);
+                else
+                    ISOweekStart.setDate(simple.getDate() + 8 - simple.getDay());
+                return ISOweekStart;
+            }
 
-        // Navigate to the previous week
-        document.getElementById('prev-week').addEventListener('click', () => {
-            if (currentWeek > 0) {
+            // Function to format date as yyyy/mm/dd
+            function formatDate(date) {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                return `${year}/${month}/${day}`;
+            }
+
+            // Modified function to update the displayed week and title
+            function updateWeek() {
+                const currentYear = new Date().getFullYear();
+                const weekStart = getDateOfWeek(currentWeek, currentYear);
+                const formattedDate = formatDate(weekStart);
+                
+                weekNav.textContent = `Week ${currentWeek}`;
+                weekTitle.textContent = formattedDate;
+                document.title = `Workout Tracker - ${formattedDate}`;
+                loadState();
+            }
+
+            // Modified event listeners for week navigation
+            document.getElementById('prev-week').addEventListener('click', () => {
                 currentWeek--;
+                if (currentWeek < 1) currentWeek = 52; // Wrap around to week 52 if going below 1
+                console.log(`Current week: ${currentWeek}`); // Print the week number
                 updateWeek();
-            }
-        });
+                streak = calculateStreak();
+                updateStreak();
+            });
 
-        // Navigate to the next week
-        document.getElementById('next-week').addEventListener('click', () => {
-            if (currentWeek < weeks.length - 1) {
+            document.getElementById('next-week').addEventListener('click', () => {
                 currentWeek++;
+                if (currentWeek > 52) currentWeek = 1; // Wrap around to week 1 if exceeding 52
+                console.log(`Current week: ${currentWeek}`); // Print the week number
                 updateWeek();
+                streak = calculateStreak();
+                updateStreak();
+            });
+
+            // Event listener to save the state when a checkbox is clicked
+            document.querySelectorAll('.exercise-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', saveState);
+            });
+
+            // Modify the toggleCheckbox function to add animation
+            function toggleCheckbox(event) {
+                const listItem = event.currentTarget;
+                const checkbox = listItem.querySelector('.exercise-checkbox');
+                checkbox.checked = !checkbox.checked;
+                saveState();
+
+                // Add and remove the 'clicked' class for animation
+                listItem.classList.add('clicked');
+                setTimeout(() => {
+                    listItem.classList.remove('clicked');
+                }, 300);
             }
-        });
 
-        // Event listener to save the state when a checkbox is clicked
-        document.querySelectorAll('.exercise-checkbox').forEach(checkbox => {
-            checkbox.addEventListener('change', saveState);
-        });
+            // Add event listeners to make rows clickable
+            document.querySelectorAll('.exercise-list li').forEach(li => {
+                li.addEventListener('click', toggleCheckbox);
+            });
 
-        // Initial load of state and week
-        loadState();
-        updateWeek();
-    </script>
+            // Function to toggle all exercises for a given day
+            function toggleAllExercises(day) {
+                const checkboxes = document.querySelectorAll(`#${day}-exercises .exercise-checkbox`);
+                const button = document.querySelector(`[data-day="${day}"]`);
+                const allChecked = Array.from(checkboxes).every(checkbox => checkbox.checked);
+
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = !allChecked;
+                });
+
+                updateCheckAllButton(day);
+                saveState();
+            }
+
+            // Function to update the Check All button text and style
+            function updateCheckAllButton(day) {
+                const checkboxes = document.querySelectorAll(`#${day}-exercises .exercise-checkbox`);
+                const button = document.querySelector(`[data-day="${day}"]`);
+                const allChecked = Array.from(checkboxes).every(checkbox => checkbox.checked);
+
+                if (allChecked) {
+                    button.textContent = "Uncheck All";
+                    button.classList.add("uncheck");
+                } else {
+                    button.textContent = "Check All";
+                    button.classList.remove("uncheck");
+                }
+            }
+
+            // Add event listeners for Check All buttons
+            document.querySelectorAll('.check-all-button').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const day = event.target.getAttribute('data-day');
+                    toggleAllExercises(day);
+                });
+            });
+
+            // Update Check All buttons when loading state
+            function updateAllCheckAllButtons() {
+                ['day1', 'day2', 'day3'].forEach(day => updateCheckAllButton(day));
+            }
+
+            // Set the initial week display, title, and streak
+            updateWeek();
+            updateStreak();
+        </script>
+    </div>
 </body>
 </html>
